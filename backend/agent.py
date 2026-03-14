@@ -23,6 +23,7 @@ Guidelines:
 - If data is unclear or missing, say so honestly
 - Format responses clearly with sections when needed
 - When asked about pipeline, revenue, sectors - give actionable insights
+- When asked cross-board questions, fetch work orders first, summarize key findings, then fetch deals. Keep responses concise.
 
 You have these tools available:
 - get_work_orders: Fetch all work order data
@@ -69,11 +70,23 @@ tools = [
     }
 ]
 
-def truncate_data(data: dict, max_items: int = 50) -> dict:
-    """Limit items sent to Groq to avoid token limits"""
+def truncate_data(data: dict, max_items: int = 15) -> dict:
+    """Limit items and columns sent to Groq to avoid token limits"""
     if "data" in data and isinstance(data["data"], list):
-        data["data"] = data["data"][:max_items]
-        data["note"] = f"Showing first {max_items} of {data.get('total_items', '?')} items"
+        items = data["data"][:max_items]
+        # Keep only the most important columns
+        key_columns = [
+            "name", "Status", "Deal Status", "Deal Stage",
+            "Sector/service", "Sector", "Masked Deal value",
+            "Closure Probability", "Owner code", "Client Code",
+            "Created Date", "Close Date (A)"
+        ]
+        slimmed = []
+        for item in items:
+            slim_item = {k: v for k, v in item.items() if k in key_columns}
+            slimmed.append(slim_item)
+        data["data"] = slimmed
+        data["note"] = f"Showing {max_items} of {data.get('total_items', '?')} items"
     return data
 
 def execute_tool(tool_name: str) -> str:
@@ -81,10 +94,10 @@ def execute_tool(tool_name: str) -> str:
     try:
         if tool_name == "get_work_orders":
             data = get_work_orders_data()
-            data = truncate_data(data, 50)
+            data = truncate_data(data, 15)
         elif tool_name == "get_deals":
             data = get_deals_data()
-            data = truncate_data(data, 50)
+            data = truncate_data(data, 15)
         elif tool_name == "get_summary":
             data = get_boards_summary()
         else:
