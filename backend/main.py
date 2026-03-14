@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional, Dict, Any
 import uvicorn
 from agent import chat
 
@@ -23,9 +23,10 @@ class Message(BaseModel):
 class ChatRequest(BaseModel):
     messages: List[Message]
 
+# Allow flexible chart data
 class ChatResponse(BaseModel):
     reply: str
-    chartData: dict | None = None
+    chartData: Optional[Dict[str, Any]] = None
 
 @app.get("/")
 def root():
@@ -39,11 +40,18 @@ def health():
 async def chat_endpoint(request: ChatRequest):
     try:
         messages = [{"role": m.role, "content": m.content} for m in request.messages]
+
         result = chat(messages)
+
+        # Safe extraction
+        reply = result.get("reply", "")
+        chart_data = result.get("chartData", None)
+
         return ChatResponse(
-            reply=result["reply"],
-            chartData=result.get("chartData")
+            reply=reply,
+            chartData=chart_data
         )
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
