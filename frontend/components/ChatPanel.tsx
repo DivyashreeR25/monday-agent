@@ -44,11 +44,11 @@ export default function ChatPanel({ onChartData }: { onChartData: (data: any) =>
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8000/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: newMessages })
-      });
+  const response = await fetch("https://monday-agent-backend.onrender.com/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages: newMessages })
+  });
 
       const data = await response.json();
 
