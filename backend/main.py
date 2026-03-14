@@ -41,10 +41,9 @@ async def chat_endpoint(request: ChatRequest):
     try:
         messages = [{"role": m.role, "content": m.content} for m in request.messages]
 
-        result = chat(messages)
+        result = chat(messages) or {}
 
-        # Safe extraction
-        reply = result.get("reply", "")
+        reply = str(result.get("reply", "Sorry, something went wrong."))
         chart_data = result.get("chartData", None)
 
         return ChatResponse(

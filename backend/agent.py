@@ -127,9 +127,9 @@ def chat(messages: list) -> dict:
         # If no tool calls, return direct response
         if not message.tool_calls:
             return {
-                "reply": message.content,
-                "chartData": None
-            }
+        "reply": message.content or "No response generated.",
+        "chartData": None
+    }
 
         # Process tool calls
         tool_results = []
@@ -164,7 +164,7 @@ def chat(messages: list) -> dict:
             max_tokens=4096
         )
 
-        final_text = final_response.choices[0].message.content
+        final_text = final_response.choices[0].message.content or "No response generated."
 
         # Try to extract chart data from tool results
         chart_data = extract_chart_data(tool_results)
