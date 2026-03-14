@@ -60,7 +60,7 @@ export default function Dashboard({ chartData }: { chartData: any }) {
                     cy="50%"
                     outerRadius={80}
                     dataKey="value"
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent = 0 }) => `${name} ${(percent * 100).toFixed(0)}%`}
                     labelLine={false}
                   >
                     {chartData.statusData.map((_: any, index: number) => (
