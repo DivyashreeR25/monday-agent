@@ -2,7 +2,7 @@
 
 An AI-powered Business Intelligence agent that answers founder-level business queries by integrating with monday.com boards containing Work Orders and Deals data.
 
-
+**Live Demo:** [monday-agent-89nl.vercel.app](https://monday-agent-89nl.vercel.app)
 
 ---
 
